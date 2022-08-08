@@ -1,19 +1,18 @@
-GCC = gcc -Wall -g
+GCC = gcc -g -m32
 EXE = telemetry
-INC_DIR = -I inc/
 temp = $(shell find src/ -type f |  sed 's|^.*/|obj/|')
 objs = $(temp:.c=.o)
 
 all: bin/$(EXE)	
 
 bin/$(EXE): $(objs:.s=.o)
-	$(GCC) $(objs:.s=.o) -o bin/$(EXE)
+	$(GCC) -no-pie $(objs:.s=.o) -o bin/$(EXE)
 
 obj/%.o: src/%.c	
-	$(GCC) -c $(INC_DIR) $< -o $@
+	$(GCC) -c $< -o $@
 
 obj/%.o: src/%.s	
-	$(GCC) -c $(INC_DIR) $< -o $@
+	$(GCC) -c $< -o $@
 
 clean:
 	rm -f obj/* bin/*%
