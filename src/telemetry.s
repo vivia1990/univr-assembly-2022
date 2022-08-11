@@ -23,6 +23,7 @@ pilot_19_str: .string "Valtteri Bottas"
 invalid_pilot_str: .string "Invalid\n"
 # array statico piloti
 pilots_array: .long	pilot_0_str, pilot_1_str ,pilot_2_str, pilot_3_str, pilot_4_str, pilot_5_str, pilot_6_str, pilot_7_str, pilot_8_str, pilot_9_str, pilot_10_str, pilot_11_str, pilot_12_str, pilot_13_str, pilot_14_str, pilot_15_str, pilot_16_str, pilot_17_str, pilot_18_str, pilot_19_str
+pilots_size: .long (. - pilots_array) / 4
  
 .text
 .globl telemetry
@@ -40,6 +41,10 @@ telemetry:
 .size	telemetry, .-telemetry
 
 .text
+##
+# int getPilotId(char *pilotName);
+# restituisce id del pilota dall'array dei piloti
+##
 .globl getPilotId
 .type getPilotId, @function
 getPilotId:
@@ -50,17 +55,19 @@ getPilotId:
     movl %esp, %ebp
 
     xorl %ecx, %ecx
-    subl $8, %esp
+    subl $12, %esp # alloco anche contatore
     movl 20(%ebp), %edx # parametro pilotname
-    movl %edx, -4(%ebp) # 
+    movl %edx, -8(%ebp)
+    movl pilots_size, %edx
+    decl %edx
 
 gpi_loop:
-    cmpl $19, %ecx
+    cmpl %edx, %ecx
     jg gpi_end_loop # while < pilots_size
 
-    movl pilots_array(%ecx), %ebx
+    movl pilots_array(, %ecx, 4), %ebx
     movl %ebx, (%esp) # parametro char
-    movl $0, %eax # call stringCompare return in %eax
+    call stringCompare
     
     cmpl $0, %eax # if
     je gpi_end_loop
@@ -69,12 +76,12 @@ gpi_loop:
     jmp gpi_loop 
 
 gpi_end_loop:
-    addl $8, %esp
+    addl $12, %esp # riporto stack pointer in posizione
     popl %edx
     movl %ecx, %eax # return value
     popl %ecx
     popl %ebx
     popl %ebp
-    ret
 
+    ret
 .size	getPilotId, .-getPilotId
