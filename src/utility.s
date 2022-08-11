@@ -1,6 +1,7 @@
 .data
 .text
 ##
+# int stringCompare(char *string1, char *string2);
 # Compara due stringhe, return vedere strcmp (C)
 ##
 .globl stringCompare
