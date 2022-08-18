@@ -15,3 +15,10 @@ int test_telemetry(unsigned counter) {
 
     return 1;
 }
+int test_charlen(unsigned counter) {
+    custom_assert(charLen("sela") == 4, counter++);
+    custom_assert(charLen("pi") == 2, counter++);
+    custom_assert(charLen("selas") == 5, counter++);
+    custom_assert(charLen("") == 0, counter++);
+    return 1;
+}
