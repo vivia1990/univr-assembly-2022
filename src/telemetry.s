@@ -30,13 +30,101 @@ pilots_size: .long (. - pilots_array) / 4
 .type telemetry, @function
 telemetry:
     pushl %ebp
+    pushl %ebx
     movl %esp, %ebp
-    pushl %ebx
+    movl 12(%ebp), %edi # char *input
+    movl 16(%ebp), %esi # char *output
+    
+    cmpb $0, (%edi) # if (*input == '\n' || (*input == '\0'))
+    je tlm_fail
 
-    leal pilot_0_str, %ebx
-    pushl %ebx
+    cmpb $10, (%edi)
+    je tlm_fail
+
+    subl $4, %esp # alloco parametro getPilotId
+    xorl %ecx, %ecx
+
+tlm_loop_1:
+    movb (%edi), %al
+    cmpb $10, %al
+    je tlm_end_loop_1
+    movb %al, (%esi, %ecx, 1)
+    incl %ecx
+    incl %edi
+    jmp tlm_loop_1
+
+tlm_end_loop_1:
+    incl %ecx
+    movb $0, (%esi, %ecx, 1)
+    incl %edi
+
+    movl %esi, (%esp)
     call getPilotId
-    movl %eax, %ecx
+    movl %ebp, %esp
+
+    cmpl $0, %eax
+    jl tlm_fail
+
+    xorl %ecx, %ecx # countChar = 0
+    subl $28, %esp # alloco (ebp) countLine(-4), output(-8), rowPointer(-16)
+    # alloco (ebp) newLine(-20), endChar(-24), comma(-28)
+    movl %esi, -8(%ebp) 
+tlm_main_loop:    
+    cmpb $0, (%edi)
+    xorl %edx, %edx # countComma
+
+tlm_flag_loop:
+    xorl %ecx, %ecx # countChar
+
+tlm_row_loop:
+    movb (%edi), %bl
+    # newLine
+    cmpb $10, %bl
+    sete %al
+    movzbl %al, %eax
+    movl %eax, -20(%ebp)
+    # endChar
+    cmpb $0, %bl 
+    sete %al
+    movzbl %al, %eax
+    movl %eax, -24(%ebp)
+    # comma
+    cmpb $44, %bl
+    sete %al
+    movzbl %al, %eax
+    movl %eax, -28(%ebp) 
+
+    cmpl $1, %eax # comma
+    je tlm_special_char
+    cmpl $1, -20(%ebp) # newLine
+    je tlm_special_char
+    cmpl $1, -24(%ebp) # endChar
+    je tlm_special_char
+
+    jmp tlm_char
+
+tlm_special_char:
+    nop
+
+tlm_char:
+    movb %bl, (%esi, %ecx, 1)
+    incl %edi # input++
+    incl %ecx
+    jmp tlm_row_loop
+
+tlm_main_loop_1:
+    movl %esi, -16(%ebp)
+    addl $1, -4(%ebp)
+    jmp tlm_main_loop
+
+tlm_fail:
+    movb $0, (%esi)
+    movl $1, %eax
+
+tlm_return:
+    popl %ebx
+    popl %ebp
+
     ret
 .size	telemetry, .-telemetry
 

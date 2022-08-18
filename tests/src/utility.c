@@ -11,10 +11,6 @@ int test_stringcompare(unsigned counter) {
     return 1;
 }
 
-int test_telemetry(unsigned counter) {    
-
-    return 1;
-}
 int test_charlen(unsigned counter) {
     custom_assert(charLen("sela") == 4, counter++);
     custom_assert(charLen("pi") == 2, counter++);
