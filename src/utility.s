@@ -58,7 +58,7 @@ charLen:
     movl %esp, %ebp
     pushl %ebx
     movl 8(%ebp), %eax
-    movl 8(%ebp), %ebx
+    movl %eax, %ebx
 
 cl_iterate:
     cmpb $0, (%eax) 

@@ -110,7 +110,9 @@ tlm_special_char:
     jne tlm_special_char_2
     jmp tlm_special_char_1
     # if skiprow
+    pushl %edi
     call charLen
+    addl $4, %esp
     addl %eax, %edi
     movl -16(%ebp), %esi
     cmpl $0, (%edi)
@@ -130,20 +132,20 @@ tlm_reset_comma:
     xorl %edx, %edx
 
 tlm_special_char_1:
-    incl %edi
-    jmp tlm_flag_loop
+    incl %edi # input++
+    jmp tlm_flag_loop # goto loop
 
 tlm_special_char_2:
     # set pilot stats
     cmpl $1, %edx # if countComma == 1
     jne tlm_special_char_3
     movb %bl, (%esi, %ecx, 1)
-    addl %edx, %esi
+    addl %ecx, %esi
     incl %esi
 
 tlm_special_char_3:
-    xorl %edx, %edx
-    incl %edi
+    xorl %ecx, %ecx # countChar = 0
+    incl %edi # input++
     cmpl $0, -28(%ebp) # if (!comma)
     jne tlm_row_loop
 
