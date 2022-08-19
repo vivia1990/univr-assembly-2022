@@ -104,7 +104,48 @@ tlm_row_loop:
     jmp tlm_char
 
 tlm_special_char:
-    nop
+    movb $0, (%esi, %ecx, 1)
+    incl %edx
+    cmpl $2, %edx # if countComma == 2
+    jne tlm_special_char_2
+    jmp tlm_special_char_1
+    # if skiprow
+    call charLen
+    addl %eax, %edi
+    movl -16(%ebp), %esi
+    cmpl $0, (%edi)
+    je tlm_end_loop
+    movl %edi, %eax
+    incl %eax
+    cmpl $0, (%eax)
+    je tlm_end_loop
+    cmpl $10, (%edi)
+    jne tlm_reset_comma
+    movl %edi, %eax
+    incl %eax
+    cmpl $10, (%eax)
+    je tlm_end_loop # se è uguale anche quello prima lo è, salto
+
+tlm_reset_comma:
+    xorl %edx, %edx
+
+tlm_special_char_1:
+    incl %edi
+    jmp tlm_flag_loop
+
+tlm_special_char_2:
+    # set pilot stats
+    cmpl $1, %edx # if countComma == 1
+    jne tlm_special_char_3
+    movb %bl, (%esi, %ecx, 1)
+    addl %edx, %esi
+    incl %esi
+
+tlm_special_char_3:
+    xorl %edx, %edx
+    incl %edi
+    cmpl $0, -28(%ebp) # if (!comma)
+    jne tlm_row_loop
 
 tlm_char:
     movb %bl, (%esi, %ecx, 1)
@@ -116,6 +157,9 @@ tlm_main_loop_1:
     movl %esi, -16(%ebp)
     addl $1, -4(%ebp)
     jmp tlm_main_loop
+
+tlm_end_loop:
+# fine
 
 tlm_fail:
     movb $0, (%esi)
