@@ -74,3 +74,37 @@ cl_length:
     popl %ebx
     popl %ebp
     ret
+.text 
+##
+# int stringCopy(char *string);
+# Copia una stringa da indirizzo di partenza a una destinazione e restituisce la lunghezza della stringa
+##
+.globl stringCopy
+.type stringCopy, @function
+stringCopy:
+    pushl %ebp
+    movl %esp, %ebp
+    pushl %esi
+    pushl %edi
+    pushl %edx
+    xorl %eax, %eax
+    movl 8(%ebp), %esi
+    movl 12(%ebp), %edi
+sc_iterate:
+    cmpb $0, (%esi)
+    je sc_end
+    cmpb $10, (%esi) 
+    je sc_end
+    movl (%esi), %edx
+    movl %edx, (%edi)
+    inc %eax
+    inc %esi
+    inc %edi
+    jmp sc_iterate
+sc_end:
+    popl %edx
+    popl %edi
+    popl %esi
+    popl %ebp
+    ret
+    
