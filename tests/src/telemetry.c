@@ -43,3 +43,33 @@ int test_telemetry(unsigned counter)
     
     return 1;
 }
+
+int test_writearray(unsigned counter)
+{
+    char *output = malloc(1024);
+    const char *low = "LOW";
+    const char *high = "HIGH";
+    const char *medium = "MEDIUM";
+
+    row_fields[0] = (long)low;
+    row_fields[1] = (long)medium;
+    row_fields[2] = (long)high;
+
+    custom_assert(writeArray(output) == 15, counter++);
+    custom_assert(stringCompare(output, "LOW,MEDIUM,HIGH") == 0, counter++);
+
+    row_fields[0] = (long)medium;
+    row_fields[1] = (long)high;
+    row_fields[2] = (long)medium;
+    custom_assert(writeArray(output) == 18, counter++);
+    custom_assert(stringCompare(output, "MEDIUM,HIGH,MEDIUM") == 0, counter++);
+
+    row_fields[0] = (long)high;
+    row_fields[1] = (long)high;
+    row_fields[2] = (long)high;
+    custom_assert(writeArray(output) == 14, counter++);
+    custom_assert(stringCompare(output, "HIGH,HIGH,HIGH") == 0, counter++);
+
+    free(output);
+    return 1;
+}
