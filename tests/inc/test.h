@@ -41,7 +41,14 @@ extern int test_telemetry(unsigned counter);
 extern int telemetry(char* input, char* output);
 
 extern int test_charlen(unsigned counter);
+<<<<<<< Updated upstream
 extern int charLen(char* string);
+=======
+extern int charLen(char* string);
+
+extern int test_writearray(unsigned counter);
+extern long writeArray(char* output);
+extern unsigned long row_fields[3];
 
 extern int test_stringcopy(unsigned counter);
 extern int stringCopy(char* string_src, char* string_dst);
