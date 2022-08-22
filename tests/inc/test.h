@@ -31,14 +31,29 @@ struct _errordesc {
 
 void custom_assert_fail(const char* __assertion, const char* counter);
 
-extern int test_stringcompare(unsigned counter);
+// maxRpm, tempMax, speedMax, SpeedSum
+extern long pilot_stats[4];
+
+// rpm, temp, speed
+extern long row_fields[3];
+
+extern long row_fields_size;
+extern long pilot_stats_size;
+
+int test_stringcompare(unsigned counter);
 extern int stringCompare(char* string1, char* string2);
 
-extern int test_getpilotid(unsigned counter);
+int test_getpilotid(unsigned counter);
 extern int getPilotId(char* pilotName);
 
-extern int test_telemetry(unsigned counter);
+int test_telemetry(unsigned counter);
 extern int telemetry(char* input, char* output);
 
-extern int test_charlen(unsigned counter);
+int test_charlen(unsigned counter);
 extern int charLen(char* string);
+
+int test_setpilotstats(unsigned counter);
+extern void setPilotStats(char* output, unsigned field);
+
+int test_setpilotstat(unsigned counter);
+extern void setPilotStat(char* output, long lowVal, long highVal, long index);

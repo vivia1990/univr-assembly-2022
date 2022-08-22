@@ -1,5 +1,6 @@
 #include "test.h"
 #include <stdlib.h>
+#include <string.h>
 
 const char* const pilots[] = {
     "Pierre Gasly",
@@ -35,11 +36,48 @@ int test_getpilotid(unsigned counter)
 
 int test_telemetry(unsigned counter)
 {
-    char *output = malloc(1024);
-    char *string = "Charles Leclerc\n0.01023,0,0,3505,90\n0.01023,1,5,4305,89\n";
+    char* output = malloc(1024);
+    char* string = "Charles Leclerc\n0.01023,0,0,3505,90\n0.01023,1,5,4305,89\n";
 
     telemetry(string, output);
     free(output);
-    
+
+    return 1;
+}
+
+int test_setpilotstats(unsigned counter)
+{
+    setPilotStats("3452", 3); // velocità
+    custom_assert(strcmp((char*)row_fields[2], "HIGH") == 0, counter++);
+    custom_assert(pilot_stats[3] == 3452, counter++);
+    custom_assert(pilot_stats[2] == 3452, counter++);
+
+    setPilotStats("3452", 4); // rpm
+    custom_assert(strcmp((char*)row_fields[0], "LOW") == 0, counter++);
+    custom_assert(pilot_stats[0] == 3452, counter++);
+
+    setPilotStats("3452", 5); // temp
+    custom_assert(strcmp((char*)row_fields[1], "HIGH") == 0, counter++);
+    custom_assert(pilot_stats[1] == 3452, counter++);
+
+    return 1;
+}
+
+int test_setpilotstat(unsigned counter)
+{
+    setPilotStat("3452", 5000, 10000, 0); // rpm
+    setPilotStat("3452", 90, 110, 1); // temp
+    setPilotStat("3452", 100, 250, 2); // velocità
+    custom_assert(strcmp((char*)row_fields[0], "LOW") == 0, counter++);
+    custom_assert(strcmp((char*)row_fields[1], "HIGH") == 0, counter++);
+    custom_assert(strcmp((char*)row_fields[2], "HIGH") == 0, counter++);
+    custom_assert(pilot_stats[0] == 3452, counter++);
+    custom_assert(pilot_stats[1] == 3452, counter++);
+    custom_assert(pilot_stats[2] == 3452, counter++);
+    custom_assert(pilot_stats[3] == 0, counter++);
+
+    memset(row_fields, 0, sizeof(long) * row_fields_size);
+    memset(pilot_stats, 0, sizeof(long) * pilot_stats_size);
+
     return 1;
 }
