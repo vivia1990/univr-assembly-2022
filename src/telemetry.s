@@ -1,7 +1,11 @@
 .file "telemetry.s"
 .bss
 .comm row_fields, 12 # array long
+.comm pilot_stats, 16 # array long
 .data
+    row_fields_size: .long 3
+    pilot_stats_size: .long 4 # maxRpm, tempMax, speedMax, SpeedSum
+
     pilot_0_str:  .string "Pierre Gasly"
     pilot_1_str:  .string "Charles Leclerc"
     pilot_2_str:  .string "Max Verstappen"
@@ -26,10 +30,15 @@
     # array statico piloti
     pilots_array: .long	pilot_0_str, pilot_1_str ,pilot_2_str, pilot_3_str, pilot_4_str, pilot_5_str, pilot_6_str, pilot_7_str, pilot_8_str, pilot_9_str, pilot_10_str, pilot_11_str, pilot_12_str, pilot_13_str, pilot_14_str, pilot_15_str, pilot_16_str, pilot_17_str, pilot_18_str, pilot_19_str
 
-    pilots_size: .long (pilot_0_str - pilots_array) / 4
-    row_fields_size: .long 3
+    strLow: .string "LOW"
+    strHigh: .string "HIGH"
+    strMed: .string "MEDIUM"
+    pilots_size: .long (pilot_0_str - pilots_array) / 4        
 
 .text
+.globl pilot_stats_size
+.globl row_fields_size
+
 .globl telemetry
 .type telemetry, @function
 telemetry:
@@ -223,6 +232,103 @@ gpi_end_loop:
 
     ret
 .size	getPilotId, .-getPilotId
+
+.text
+##
+# int setPilotStats(char *output, unsigned field)
+# setta le statistiche relative al pilota
+##
+.globl setPilotStats
+.type setPilotStats, @function
+setPilotStats:
+    pushl %ebp    
+    pushl %ebx
+    movl %esp, %ebp
+    movl $3452, %eax # output
+    movl 16(%ebp), %ebx # field
+    subl $16, %esp
+    movl %eax, (%esp)
+
+    cmpl $3, %ebx
+    jne spss_1
+    movl $2, 12(%esp)
+    movl $250, 8(%esp)
+    movl $100, 4(%esp)
+    movl $3, %eax # pilot_stats[3]
+    movl $3452, pilot_stats(, %eax, 4)
+    call setPilotStat
+    jmp spss_end
+
+spss_1:
+    cmpl $4, %ebx
+    jne spss_2
+    movl $0, 12(%esp)
+    movl $10000, 8(%esp)
+    movl $5000, 4(%esp)
+    call setPilotStat
+    jmp spss_end
+
+spss_2:
+    cmpl $5, %ebx
+    jne spss_end
+    movl $1, 12(%esp)
+    movl $110, 8(%esp)
+    movl $90, 4(%esp)    
+    call setPilotStat    
+
+spss_end:
+    addl $16, %esp    
+    popl %ebx
+    popl %ebp
+
+    ret
+.size	setPilotStats, .-setPilotStats
+
+.text
+##
+# void setPilotStat(char *output, long lowVal, long highVal, long index)
+# setta le statistiche relative al pilota con i vari confronti
+##
+.globl setPilotStat
+.type setPilotStat, @function
+setPilotStat:
+    pushl %ebp    
+    pushl %ebx
+    pushl %ecx
+    movl %esp, %ebp
+    # call atoi
+    movl $3452, %eax
+    movl 28(%ebp), %ecx # index
+    
+    cmpl %eax, pilot_stats(, %ecx, 4)
+    jg sps_1
+    movl %eax, pilot_stats(, %ecx, 4)
+    
+sps_1:
+    cmpl %eax, 20(%ebp) # lowVal
+    jle sps_2
+    leal strLow, %ebx
+    movl %ebx, row_fields(, %ecx, 4)
+    jmp sps_end
+
+sps_2:
+    cmpl %eax, 24(%ebp) # highVal
+    jg sps_3
+    leal strHigh, %ebx
+    movl %ebx, row_fields(, %ecx, 4)
+    jmp sps_end
+
+sps_3:
+    leal strMed, %ebx
+    movl %ebx, row_fields(, %ecx, 4)
+
+sps_end:
+    popl %ecx
+    popl %ebx
+    popl %ebp
+
+    ret
+.size	setPilotStat, .-setPilotStat
 
 .text
 ##
