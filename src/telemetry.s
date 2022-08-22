@@ -29,16 +29,16 @@
     invalid_pilot_str: .string "Invalid\n"
     # array statico piloti
     pilots_array: .long	pilot_0_str, pilot_1_str ,pilot_2_str, pilot_3_str, pilot_4_str, pilot_5_str, pilot_6_str, pilot_7_str, pilot_8_str, pilot_9_str, pilot_10_str, pilot_11_str, pilot_12_str, pilot_13_str, pilot_14_str, pilot_15_str, pilot_16_str, pilot_17_str, pilot_18_str, pilot_19_str
+    pilots_size: .long (. - pilots_array) / 4
 
     strLow: .string "LOW"
     strHigh: .string "HIGH"
     strMed: .string "MEDIUM"
-    pilots_size: .long (pilot_0_str - pilots_array) / 4        
 
-.text
 .globl pilot_stats_size
 .globl row_fields_size
 
+.text
 .globl telemetry
 .type telemetry, @function
 telemetry:

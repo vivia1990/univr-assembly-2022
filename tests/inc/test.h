@@ -32,10 +32,10 @@ struct _errordesc {
 void custom_assert_fail(const char* __assertion, const char* counter);
 
 // maxRpm, tempMax, speedMax, SpeedSum
-extern long pilot_stats[4];
+extern unsigned long pilot_stats[4];
 
 // rpm, temp, speed
-extern long row_fields[3];
+extern unsigned long row_fields[3];
 
 extern long row_fields_size;
 extern long pilot_stats_size;
@@ -54,7 +54,6 @@ extern int charLen(char* string);
 
 extern int test_writearray(unsigned counter);
 extern long writeArray(char* output);
-extern unsigned long row_fields[3];
 
 extern int test_stringcopy(unsigned counter);
 extern int stringCopy(char* string_src, char* string_dst);

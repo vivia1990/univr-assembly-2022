@@ -14,7 +14,17 @@ unit_test test_array[] = {
     { .name = "GetPilotId",
         .test = &test_getpilotid },
     { .name = "StringCompare",
-        .test = &test_stringcompare }
+        .test = &test_stringcompare },
+    { .name = "StringCopy",
+        .test = &test_stringcopy },
+    { .name = "CharLen",
+        .test = &test_charlen },
+    { .name = "WriteArray",
+        .test = &test_writearray },
+    { .name = "SetPilotStat",
+        .test = &test_setpilotstat },
+    { .name = "SetPilotStatS",
+        .test = &test_setpilotstats }
 };
 
 int main(int argc, char const* argv[])
