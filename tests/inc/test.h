@@ -51,8 +51,6 @@ extern int telemetry(char* input, char* output);
 
 int test_charlen(unsigned counter);
 extern int charLen(char* string);
-=======
-extern int charLen(char* string);
 
 extern int test_writearray(unsigned counter);
 extern long writeArray(char* output);
