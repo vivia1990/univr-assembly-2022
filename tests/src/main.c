@@ -24,7 +24,9 @@ unit_test test_array[] = {
     { .name = "SetPilotStat",
         .test = &test_setpilotstat },
     { .name = "SetPilotStatS",
-        .test = &test_setpilotstats }
+        .test = &test_setpilotstats },
+    { .name = "StrToNum",
+        .test = &test_strtonum }
 };
 
 int main(int argc, char const* argv[])

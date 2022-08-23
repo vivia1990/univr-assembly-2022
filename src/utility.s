@@ -77,20 +77,17 @@ cl_length:
 
 .text
 ##
+# long strToNum(char* number)
 # converte una stringa di caratteri in numero
 ##
-
 .globl strToNum
 .type strToNum, @function
-
-
 strToNum: 
     pushl %ebp
     movl %esp, %ebp
     pushl %edi 
-    pushl %esi    # stringa
-    pushl %ecx    # contatore
-    pushl %eax
+    pushl %esi 
+    pushl %ecx    
     pushl %ebx    
     movl 8(%ebp), %esi
 
@@ -101,25 +98,20 @@ strToNum:
 
 stn_ripeti:
     movb (%ecx,%esi,1), %bl
-
     cmp $0, %bl     # vedo se e' stato letto il carattere '\n'
     je stn_fine
-
     subb $48, %bl   # converte il codice ASCII della cifra nel numero corrisp.
     mull %edi       # EBX = EBX * 10
     addl %ebx, %eax
-
     inc %ecx
     jmp stn_ripeti
 
-
 stn_fine:
-    popl %ebx      # ripristino i registri utilizzati
-    popl %edx
-    popl %ecx
-    popl %eax
+    popl %ebx      # ripristino i registri utilizzati    
+    popl %ecx    
     popl %esi
     popl %edi
+    popl %ebp
 
     ret
 

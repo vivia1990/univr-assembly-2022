@@ -243,11 +243,18 @@ gpi_end_loop:
 setPilotStats:
     pushl %ebp    
     pushl %ebx
+    pushl %ecx
     movl %esp, %ebp
-    movl $3452, %eax # output
-    movl 16(%ebp), %ebx # field
+    movl 16(%ebp), %eax # output
+    movl 20(%ebp), %ebx # field
     subl $16, %esp
     movl %eax, (%esp)
+
+    cmpl $3, %ebx
+    jl spss_end
+    
+    call strToNum
+    movl %eax, (%esp)        
 
     cmpl $3, %ebx
     jne spss_1
@@ -255,7 +262,9 @@ setPilotStats:
     movl $250, 8(%esp)
     movl $100, 4(%esp)
     movl $3, %eax # pilot_stats[3]
-    movl $3452, pilot_stats(, %eax, 4)
+    movl (%esp), %ecx
+    addl pilot_stats(, %eax, 4), %ecx
+    movl %ecx, pilot_stats(, %eax, 4)
     call setPilotStat
     jmp spss_end
 
@@ -277,7 +286,8 @@ spss_2:
     call setPilotStat    
 
 spss_end:
-    addl $16, %esp    
+    addl $16, %esp
+    popl %ecx    
     popl %ebx
     popl %ebp
 
@@ -286,7 +296,7 @@ spss_end:
 
 .text
 ##
-# void setPilotStat(char *output, long lowVal, long highVal, long index)
+# void setPilotStat(long number, long lowVal, long highVal, long index)
 # setta le statistiche relative al pilota con i vari confronti
 ##
 .globl setPilotStat
@@ -295,9 +305,8 @@ setPilotStat:
     pushl %ebp    
     pushl %ebx
     pushl %ecx
-    movl %esp, %ebp
-    # call atoi
-    movl $3452, %eax
+    movl %esp, %ebp    
+    movl 16(%ebp), %eax # number
     movl 28(%ebp), %ecx # index
     
     cmpl %eax, pilot_stats(, %ecx, 4)

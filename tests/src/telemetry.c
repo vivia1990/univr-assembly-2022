@@ -2,6 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define MAX_SPEED 250
+#define MIN_SPEED 100
+#define MAX_TMP 110
+#define MIN_TMP 90
+#define MAX_RPM 10000
+#define MIN_RPM 5000
+
 const char* const pilots[] = {
     "Pierre Gasly",
     "Charles Leclerc",
@@ -60,14 +67,51 @@ int test_setpilotstats(unsigned counter)
     custom_assert(strcmp((char*)row_fields[1], "HIGH") == 0, counter++);
     custom_assert(pilot_stats[1] == 3452, counter++);
 
+    memset(row_fields, 0, sizeof(long) * row_fields_size);
+    memset(pilot_stats, 0, sizeof(long) * pilot_stats_size);
+
+    setPilotStats("0", 3); // velocità
+    custom_assert(strcmp((char*)row_fields[2], "LOW") == 0, counter++);
+    custom_assert(pilot_stats[3] == 0, counter++);
+    custom_assert(pilot_stats[2] == 0, counter++);
+
+    setPilotStats("77777", 4); // rpm
+    custom_assert(strcmp((char*)row_fields[0], "HIGH") == 0, counter++);
+    custom_assert(pilot_stats[0] == 77777, counter++);
+
+    setPilotStats("105", 5); // temp
+    custom_assert(strcmp((char*)row_fields[1], "MEDIUM") == 0, counter++);
+    custom_assert(pilot_stats[1] == 105, counter++);
+
+    setPilotStats("10", 3); // velocità
+    custom_assert(strcmp((char*)row_fields[2], "LOW") == 0, counter++);
+    custom_assert(pilot_stats[3] == 10, counter++);
+    custom_assert(pilot_stats[2] == 10, counter++);
+
+    setPilotStats("77776", 4); // rpm
+    custom_assert(strcmp((char*)row_fields[0], "HIGH") == 0, counter++);
+    custom_assert(pilot_stats[0] == 77777, counter++);
+
+    setPilotStats("104", 5); // temp
+    custom_assert(strcmp((char*)row_fields[1], "MEDIUM") == 0, counter++);
+    custom_assert(pilot_stats[1] == 105, counter++);
+
+    setPilotStats("150", 3); // velocità
+    custom_assert(strcmp((char*)row_fields[2], "MEDIUM") == 0, counter++);
+    custom_assert(pilot_stats[3] == 10 + 150, counter++);
+    custom_assert(pilot_stats[2] == 150, counter++);
+
+    memset(row_fields, 0, sizeof(long) * row_fields_size);
+    memset(pilot_stats, 0, sizeof(long) * pilot_stats_size);
+
     return 1;
 }
 
 int test_setpilotstat(unsigned counter)
 {
-    setPilotStat("3452", 5000, 10000, 0); // rpm
-    setPilotStat("3452", 90, 110, 1); // temp
-    setPilotStat("3452", 100, 250, 2); // velocità
+    setPilotStat(3452, MIN_RPM, MAX_RPM, 0); // rpm
+    setPilotStat(3452, MIN_TMP, MAX_TMP, 1); // temp
+    setPilotStat(3452, MIN_SPEED, MAX_SPEED, 2); // velocità
     custom_assert(strcmp((char*)row_fields[0], "LOW") == 0, counter++);
     custom_assert(strcmp((char*)row_fields[1], "HIGH") == 0, counter++);
     custom_assert(strcmp((char*)row_fields[2], "HIGH") == 0, counter++);
@@ -84,10 +128,10 @@ int test_setpilotstat(unsigned counter)
 
 int test_writearray(unsigned counter)
 {
-    char *output = malloc(1024);
-    const char *low = "LOW";
-    const char *high = "HIGH";
-    const char *medium = "MEDIUM";
+    char* output = malloc(1024);
+    const char* low = "LOW";
+    const char* high = "HIGH";
+    const char* medium = "MEDIUM";
 
     row_fields[0] = (long)low;
     row_fields[1] = (long)medium;
@@ -107,6 +151,9 @@ int test_writearray(unsigned counter)
     row_fields[2] = (long)high;
     custom_assert(writeArray(output) == 14, counter++);
     custom_assert(stringCompare(output, "HIGH,HIGH,HIGH") == 0, counter++);
+
+    memset(row_fields, 0, sizeof(long) * row_fields_size);
+    memset(pilot_stats, 0, sizeof(long) * pilot_stats_size);
 
     free(output);
     return 1;

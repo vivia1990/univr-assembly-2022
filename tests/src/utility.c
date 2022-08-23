@@ -24,8 +24,12 @@ int test_charlen(unsigned counter)
     return 1;
 }
 
-int test_strtonum(unsigned counter) { 
-    custom_assert(strToNum("0") == 0, counter++);  
+int test_strtonum(unsigned counter)
+{
+    custom_assert(strToNum("0") == 0, counter++);
+    custom_assert(strToNum("3245") == 3245, counter++);
+    custom_assert(strToNum("1") == 1, counter++);
+    custom_assert(strToNum("22151251") == 22151251, counter++);
 
     return 1;
 }
@@ -38,6 +42,6 @@ int test_stringcopy(unsigned counter)
     custom_assert(stringCopy("", str_dest) == 0, counter++);
     custom_assert(stringCopy("\n", str_dest) == 0, counter++);
     custom_assert(stringCopy("gallina", str_dest) == 7, counter++);
-    
+
     return 1;
 }

@@ -54,7 +54,7 @@ extern int charLen(char* string);
 
 
 extern int test_strtonum(unsigned counter);
-extern int strToNum(char*string);
+extern unsigned long strToNum(char*string);
 
 extern int test_writearray(unsigned counter);
 extern long writeArray(char* output);
@@ -66,4 +66,4 @@ int test_setpilotstats(unsigned counter);
 extern void setPilotStats(char* output, unsigned field);
 
 int test_setpilotstat(unsigned counter);
-extern void setPilotStat(char* output, long lowVal, long highVal, long index);
+extern void setPilotStat(long number, long lowVal, long highVal, long index);
