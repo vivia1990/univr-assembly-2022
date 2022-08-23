@@ -66,3 +66,6 @@ extern void setPilotStats(char* output, unsigned field);
 
 int test_setpilotstat(unsigned counter);
 extern void setPilotStat(long number, long lowVal, long highVal, long index);
+
+extern int test_inttostring(unsigned counter);
+extern char* intToString(int num);

@@ -45,3 +45,10 @@ int test_stringcopy(unsigned counter)
 
     return 1;
 }
+
+int test_inttostring(unsigned counter)
+{
+    custom_assert(stringCompare(intToString(1312), "1312") == 0, counter++);
+    custom_assert(stringCompare(intToString(1), "1") == 0, counter++);
+    custom_assert(stringCompare(intToString(1000001), "1000001") == 0, counter++);
+}
