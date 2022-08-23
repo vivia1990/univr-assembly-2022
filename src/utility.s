@@ -1,4 +1,10 @@
 .data
+string:
+    .string "00000000000"
+str_len:
+    .long . - string
+car:
+    .byte 0 # la variabile car è dichiarata di tipo byte
 .text
 ##
 # int stringCompare(char *string1, char *string2);
@@ -110,4 +116,61 @@ sc_end:
     popl %esi
     popl %ebp
     ret
-    
+
+.text
+.global intToString # rende visibile il simbolo itoa al linker
+.type intToString, @function # dichiarazione della funzione itoa
+intToString:
+    pushl %ebp
+    movl %esp, %ebp
+    pushl %esi
+    pushl %edi
+    pushl %ebx
+    pushl %ecx
+    pushl %edx
+    movl 8(%ebp), %eax
+    mov $0, %ecx # carica il numero 0 in ecx
+    leal string, %edi
+    addl str_len, %edi
+is_continua_a_dividere:
+    cmp $10, %eax # confronta 10 con il contenuto di eax
+    jge is_dividi # salta all'etichetta dividi se eax è
+    pushl %eax # salva nello stack il contenuto di eax
+    inc %ecx # incrementa di 1 il valore di ecx per
+    mov %ecx, %ebx # pone il valore di ecx in ebx
+    pushl %ecx
+    leal string, %ecx
+    addl str_len, %ecx
+    subl %ebx, %ecx
+    movl %ecx, %esi
+    popl %ecx
+    jmp is_salva # salta all'etichetta stampa
+is_dividi:
+    movl $0, %edx # carica 0 in edx
+    movl $10, %ebx # carica 10 in ebx
+    divl %ebx # divide per ebx (10) il numero ottenuto
+    pushl %edx # salva il resto nello stack
+    inc %ecx # incrementa il contatore delle cifre da stampare
+    jmp is_continua_a_dividere
+is_salva:
+    cmp $0, %ebx
+    je is_fine
+    popl %eax
+    movb %al, car
+    addb $48, car
+    subl %ebx, %edi
+    movl car, %eax 
+    movl %eax, (%edi)
+    addl %ebx, %edi
+    dec %ebx
+    jmp is_salva
+is_fine:
+    movl %esi, %eax
+    popl %edx
+    popl %ecx
+    popl %ebx
+    popl %edi
+    popl %esi
+    popl %ebp
+ ret
+ 
