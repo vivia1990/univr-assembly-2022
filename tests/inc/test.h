@@ -42,3 +42,7 @@ extern int telemetry(char* input, char* output);
 
 extern int test_charlen(unsigned counter);
 extern int charLen(char* string);
+
+
+extern int test_strtonum(unsigned counter);
+extern int strToNum(char*string);

@@ -23,3 +23,12 @@ int test_charlen(unsigned counter) {
     custom_assert(charLen("") == 0, counter++);
     return 1;
 }
+
+
+
+
+int test_strtonum(unsigned counter) { 
+    custom_assert(strToNum("0") == 0, counter++);  
+
+    return 1;
+}
