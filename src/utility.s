@@ -75,6 +75,54 @@ cl_length:
     popl %ebp
     ret
 
+.text
+##
+# converte una stringa di caratteri in numero
+##
+
+.globl strToNum
+.type strToNum, @function
+
+
+strToNum: 
+    pushl %ebp
+    movl %esp, %ebp
+    pushl %edi 
+    pushl %esi    # stringa
+    pushl %ecx    # contatore
+    pushl %eax
+    pushl %ebx    
+    movl 8(%ebp), %esi
+
+    xorl %ecx, %ecx   # azzero il contatore
+    xorl %ebx, %ebx  # azzero il registro EBX
+    xorl %eax, %eax  
+    movl $10, %edi
+
+stn_ripeti:
+    movb (%ecx,%esi,1), %bl
+
+    cmp $0, %bl     # vedo se e' stato letto il carattere '\n'
+    je stn_fine
+
+    subb $48, %bl   # converte il codice ASCII della cifra nel numero corrisp.
+    mull %edi       # EBX = EBX * 10
+    addl %ebx, %eax
+
+    inc %ecx
+    jmp stn_ripeti
+
+
+stn_fine:
+    popl %ebx      # ripristino i registri utilizzati
+    popl %edx
+    popl %ecx
+    popl %eax
+    popl %esi
+    popl %edi
+
+    ret
+
 .text 
 ##
 # int stringCopy(char *input, char *output);

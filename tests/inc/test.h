@@ -49,8 +49,12 @@ extern int getPilotId(char* pilotName);
 int test_telemetry(unsigned counter);
 extern int telemetry(char* input, char* output);
 
-int test_charlen(unsigned counter);
+extern int test_charlen(unsigned counter);
 extern int charLen(char* string);
+
+
+extern int test_strtonum(unsigned counter);
+extern int strToNum(char*string);
 
 extern int test_writearray(unsigned counter);
 extern long writeArray(char* output);

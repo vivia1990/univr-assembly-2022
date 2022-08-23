@@ -24,6 +24,12 @@ int test_charlen(unsigned counter)
     return 1;
 }
 
+int test_strtonum(unsigned counter) { 
+    custom_assert(strToNum("0") == 0, counter++);  
+
+    return 1;
+}
+
 int test_stringcopy(unsigned counter)
 {
     char* str_dest = (char*)malloc(1024);
