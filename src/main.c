@@ -13,23 +13,24 @@ extern int telemetry(char* input, char* output);
 
 size_t get_size(char* filename);
 
-char* retrieve_input(char* filename, char* input, size_t size);  // funzione di supporto che prende in input il nome del file
-                                                                 // e modifica la stringa input da passare come parametro alla funzione assembly
-void write_output(char* filename, char* output);                 // Scrive il risultato su un file di output
+char* retrieve_input(char* filename, char* input, size_t size); // funzione di supporto che prende in input il nome del file
+                                                                // e modifica la stringa input da passare come parametro alla funzione assembly
+void write_output(char* filename, char* output); // Scrive il risultato su un file di output
 
-int main(int argc, char* argv[]) {
-    char* inputFilename = argv[1];   // recupero la stringa del nome del file di input
-    char* outputFilename = argv[2];  // recupero la stringa del nome del file di output
-    char* inputString;               // stringa che conterrà il contenuto del file di input
-    char* outputString;              // stringa che conterrà il contenuto del file di output
-    size_t size;                     // variabile che conterrà la dimensione del file di input
+int main(int argc, char* argv[])
+{
+    char* inputFilename = argv[1]; // recupero la stringa del nome del file di input
+    char* outputFilename = argv[2]; // recupero la stringa del nome del file di output
+    char* inputString; // stringa che conterrà il contenuto del file di input
+    char* outputString; // stringa che conterrà il contenuto del file di output
+    size_t size; // variabile che conterrà la dimensione del file di input
 
     //***********************************************************
     // Alloco lo spazio delle stringhe in base al file di input
     //***********************************************************
-    size = get_size(argv[1]);                    // recupero la dimensione del file di input
-    inputString = malloc(sizeof(char) * size);   // alloco lo spazio per la stringa che conterrà il contenuto del file di input
-    outputString = malloc(sizeof(char) * size);  // alloco lo spazio per la stringa di output della funzione assembly
+    size = get_size(argv[1]); // recupero la dimensione del file di input
+    inputString = malloc(sizeof(char) * size); // alloco lo spazio per la stringa che conterrà il contenuto del file di input
+    outputString = malloc(sizeof(char) * size); // alloco lo spazio per la stringa di output della funzione assembly
 
     //**********************************
     // Recupera input dal file
@@ -40,9 +41,15 @@ int main(int argc, char* argv[]) {
     //**********************************
     // Chiamata funzione assembly
     //**********************************
+    clock_t tic = clock();
+
     telemetry(inputString, outputString);
 
-    // printf("%s",outputString);
+    clock_t toc = clock();
+
+    printf("Elapsed: %f seconds\n", (double)(toc - tic) / CLOCKS_PER_SEC);
+
+    // printf("%s", outputString);
 
     //**********************************
     // Scrivi output della funzione sul file di output
@@ -56,24 +63,27 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 
-size_t get_size(char* filename) {
+size_t get_size(char* filename)
+{
     size_t size;
     struct stat st;
 
-    stat(filename, &st);    // funzione per recuperare info del file e salvarle in struttura st
-    size = st.st_size + 1;  // aggiungo un carattere per  aggiungere il  tappo \0 a fine stringa
+    stat(filename, &st); // funzione per recuperare info del file e salvarle in struttura st
+    size = st.st_size + 1; // aggiungo un carattere per  aggiungere il  tappo \0 a fine stringa
 
     return size;
 }
 
-void write_output(char* filename, char* output) {
-    FILE* outputFile = fopen(filename, "w");  // apre il file da scrivere. Se non esiste lo crea. Se esiste lo resetta
+void write_output(char* filename, char* output)
+{
+    FILE* outputFile = fopen(filename, "w"); // apre il file da scrivere. Se non esiste lo crea. Se esiste lo resetta
 
-    fprintf(outputFile, "%s", output);  // scrive sul file
-    fclose(outputFile);                 // chiude il file
+    fprintf(outputFile, "%s", output); // scrive sul file
+    fclose(outputFile); // chiude il file
 }
 
-char* retrieve_input(char* filename, char* input, size_t size) {
+char* retrieve_input(char* filename, char* input, size_t size)
+{
     FILE* inputFile = fopen(filename, "r");
     int i = 0;
     char c;
@@ -83,12 +93,12 @@ char* retrieve_input(char* filename, char* input, size_t size) {
         exit(1);
     }
 
-    while (EOF != (c = fgetc(inputFile)) && i < size) {  // copio dal file alla stringa, parametro della funzione assembly
+    while (EOF != (c = fgetc(inputFile)) && i < size) { // copio dal file alla stringa, parametro della funzione assembly
         input[i] = c;
         i++;
     }
 
-    input[strlen(input)] = '\0';  // tappo!
+    input[strlen(input)] = '\0'; // tappo!
 
     fclose(inputFile);
     return input;

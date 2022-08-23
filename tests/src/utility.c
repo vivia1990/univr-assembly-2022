@@ -38,10 +38,16 @@ int test_stringcopy(unsigned counter)
 {
     char* str_dest = (char*)malloc(1024);
     custom_assert(stringCopy("deca", str_dest) == 4, counter++);
+    custom_assert(stringCompare("deca", str_dest) == 0, counter++);
     custom_assert(stringCopy("SELA", str_dest) == 4, counter++);
+    custom_assert(stringCompare("SELA", str_dest) == 0, counter++);
     custom_assert(stringCopy("", str_dest) == 0, counter++);
-    custom_assert(stringCopy("\n", str_dest) == 0, counter++);
+    custom_assert(stringCopy("\n", str_dest) == 1, counter++);
+    custom_assert(stringCompare("\n", str_dest) == 0, counter++);
     custom_assert(stringCopy("gallina", str_dest) == 7, counter++);
+    custom_assert(stringCompare("gallina", str_dest) == 0, counter++);
+
+    free(str_dest);
 
     return 1;
 }
@@ -51,4 +57,6 @@ int test_inttostring(unsigned counter)
     custom_assert(stringCompare(intToString(1312), "1312") == 0, counter++);
     custom_assert(stringCompare(intToString(1), "1") == 0, counter++);
     custom_assert(stringCompare(intToString(1000001), "1000001") == 0, counter++);
+
+    return 1;
 }

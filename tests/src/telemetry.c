@@ -1,4 +1,5 @@
 #include "test.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -38,15 +39,54 @@ int test_getpilotid(unsigned counter)
     custom_assert(getPilotId("Max Verstappen") == 2, counter);
     custom_assert(getPilotId("Pierre Gasly") == 0, counter);
     custom_assert(getPilotId("Valtteri Bottas") == 19, counter);
+    custom_assert(getPilotId("burundi") < 0, counter);
+    custom_assert(getPilotId("Valtteri Bottass") < 0, counter);
+    custom_assert(getPilotId("romain Grosjean") < 0, counter);
     return 1;
 }
 
 int test_telemetry(unsigned counter)
 {
     char* output = malloc(1024);
-    char* string = "Charles Leclerc\n0.01023,0,0,3505,90\n0.01023,1,5,4305,89\n";
-
+    char* string = malloc(1024);
+    strcpy(string, "Charles Leclerc\n0.01023,1,92,3505,90\n0.01023,1,3452,3452,3452\n");
     telemetry(string, output);
+    custom_assert(pilot_stats[0] == 3505, counter++); // maxRpm
+    custom_assert(pilot_stats[1] == 3452, counter++); // maxTmp
+    custom_assert(pilot_stats[2] == 3452, counter++); // maxSpped
+    custom_assert(pilot_stats[3] == 92 + 3452, counter++); // sumSpeed
+    memset(output, 0, 1024);
+    memset(row_fields, 0, sizeof(long) * row_fields_size);
+    memset(pilot_stats, 0, sizeof(long) * pilot_stats_size);
+
+    strcpy(string, "Charles Leclerc\n0.01023,1,92,3505,90\n0.01023,1,3452,3452,3452\n\n\n\n");
+    telemetry(string, output);
+    custom_assert(pilot_stats[0] == 3505, counter++); // maxRpm
+    custom_assert(pilot_stats[1] == 3452, counter++); // maxTmp
+    custom_assert(pilot_stats[2] == 3452, counter++); // maxSpped
+    custom_assert(pilot_stats[3] == 92 + 3452, counter++); // sumSpeed
+    memset(output, 0, 1024);
+    memset(row_fields, 0, sizeof(long) * row_fields_size);
+    memset(pilot_stats, 0, sizeof(long) * pilot_stats_size);
+
+    strcpy(string, "Charles Leclerc\n0.01023,12,92,3505,90\n0.01023,1,3452,3452,3452\n\n\n\n");
+    telemetry(string, output);
+    memset(output, 0, 1024);
+    memset(row_fields, 0, sizeof(long) * row_fields_size);
+    memset(pilot_stats, 0, sizeof(long) * pilot_stats_size);
+
+    strcpy(string, "Charles Leclerc\n0.01023,12,92,3505,90\n0.01023,1,3452,3452,3452\n0.01023,1,3452,3452,3452\n\n\n\n");
+    telemetry(string, output);
+    memset(output, 0, 1024);
+    memset(row_fields, 0, sizeof(long) * row_fields_size);
+    memset(pilot_stats, 0, sizeof(long) * pilot_stats_size);
+
+    strcpy(string, "Charles Leclerc\n0.01023,12,92,3505,90\n0.01023,1,3452,3452,3452\n0.01023,0,3452,3452,3452\n\n\n\n");
+    telemetry(string, output);
+    memset(output, 0, 1024);
+    memset(row_fields, 0, sizeof(long) * row_fields_size);
+    memset(pilot_stats, 0, sizeof(long) * pilot_stats_size);
+
     free(output);
 
     return 1;

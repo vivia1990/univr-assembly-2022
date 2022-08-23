@@ -37,6 +37,7 @@
 
 .globl pilot_stats_size
 .globl row_fields_size
+.globl pilots_size
 
 .text
 .globl telemetry
@@ -44,9 +45,11 @@
 telemetry:
     pushl %ebp
     pushl %ebx
+    pushl %edx
+    pushl %ecx
     movl %esp, %ebp
-    movl 12(%ebp), %edi # char *input
-    movl 16(%ebp), %esi # char *output
+    movl 20(%ebp), %edi # char *input
+    movl 24(%ebp), %esi # char *output
     
     cmpb $0, (%edi) # if (*input == '\n' || (*input == '\0'))
     je tlm_fail
@@ -55,19 +58,18 @@ telemetry:
     je tlm_fail
 
     subl $4, %esp # alloco parametro getPilotId
-    xorl %ecx, %ecx
+    xorl %ecx, %ecx # countChar
 
-tlm_loop_1:
+tlm_pilot_loop:
     movb (%edi), %al
     cmpb $10, %al
-    je tlm_end_loop_1
+    je tlm_end_pilot_loop
     movb %al, (%esi, %ecx, 1)
     incl %ecx
     incl %edi
-    jmp tlm_loop_1
+    jmp tlm_pilot_loop
 
-tlm_end_loop_1:
-    incl %ecx
+tlm_end_pilot_loop:
     movb $0, (%esi, %ecx, 1)
     incl %edi
 
@@ -79,11 +81,15 @@ tlm_end_loop_1:
     jl tlm_fail
 
     xorl %ecx, %ecx # countChar = 0
-    subl $28, %esp # alloco (ebp) countLine(-4), output(-8), rowPointer(-16)
-    # alloco (ebp) newLine(-20), endChar(-24), comma(-28)
-    movl %esi, -8(%ebp) 
+    subl $32, %esp # alloco (ebp) countLine(-4), output(-8), rowPointer(-16)
+    # alloco (ebp) newLine(-20), endChar(-24), comma(-28), pilotId(-32)
+    movl %eax, -32(%ebp)
+    movl %esi, -8(%ebp)
+    movl %esi, -16(%ebp)
+
 tlm_main_loop:    
     cmpb $0, (%edi)
+    je tlm_end_loop
     xorl %edx, %edx # countComma
 
 tlm_flag_loop:
@@ -118,27 +124,30 @@ tlm_row_loop:
 
 tlm_special_char:
     movb $0, (%esi, %ecx, 1)
-    incl %edx
+    incl %edx # countComma
     cmpl $2, %edx # if countComma == 2
     jne tlm_special_char_2
-    jmp tlm_special_char_1
-    # if skiprow
+    pushl %esi
+    call strToNum
+    addl $4, %esp
+    cmpl -32(%ebp), %eax # pilotId == currentId
+    je tlm_special_char_1
     pushl %edi
     call charLen
     addl $4, %esp
     addl %eax, %edi
-    movl -16(%ebp), %esi
-    cmpl $0, (%edi)
+    movl -16(%ebp), %esi # rowPointer
+    cmpb $0, (%edi)
     je tlm_end_loop
     movl %edi, %eax
     incl %eax
-    cmpl $0, (%eax)
+    cmpb $0, (%eax)
     je tlm_end_loop
-    cmpl $10, (%edi)
+    cmpb $10, (%edi)
     jne tlm_reset_comma
     movl %edi, %eax
     incl %eax
-    cmpl $10, (%eax)
+    cmpb $10, (%eax)
     je tlm_end_loop # se è uguale anche quello prima lo è, salto
 
 tlm_reset_comma:
@@ -149,7 +158,10 @@ tlm_special_char_1:
     jmp tlm_flag_loop # goto loop
 
 tlm_special_char_2:
-    # set pilot stats
+    pushl %edx
+    pushl %esi
+    call setPilotStats
+    addl $8, %esp
     cmpl $1, %edx # if countComma == 1
     jne tlm_special_char_3
     movb %bl, (%esi, %ecx, 1)
@@ -161,26 +173,44 @@ tlm_special_char_3:
     incl %edi # input++
     cmpl $0, -28(%ebp) # if (!comma)
     jne tlm_row_loop
+    pushl %esi
+    call writeArray
+    addl $4, %esp
+    addl %eax, %esi
+    movb $10, (%esi)
+    incl %esi
+    cmpl $1, -20(%ebp) # if (newLine && *input != '\n')
+    jne tlm_special_char_4 # goto end_loop
+    cmpb $10, (%edi)
+    je tlm_special_char_4
+    jmp tlm_main_loop_1
+
+tlm_special_char_4:
+    addl $1, -4(%ebp) # countline
+    jmp tlm_end_loop
 
 tlm_char:
     movb %bl, (%esi, %ecx, 1)
     incl %edi # input++
-    incl %ecx
+    incl %ecx # countChar++
     jmp tlm_row_loop
 
 tlm_main_loop_1:
-    movl %esi, -16(%ebp)
-    addl $1, -4(%ebp)
+    movl %esi, -16(%ebp) # rowPointer
+    addl $1, -4(%ebp) # countline
     jmp tlm_main_loop
 
 tlm_end_loop:
-# fine
+    jmp tlm_return
 
 tlm_fail:
     movb $0, (%esi)
     movl $1, %eax
 
 tlm_return:
+    movl %ebp, %esp    
+    popl %ecx
+    popl %edx
     popl %ebx
     popl %ebp
 
@@ -217,15 +247,21 @@ gpi_loop:
     call stringCompare
     
     cmpl $0, %eax # if
-    je gpi_end_loop
+    je gpi_end_loop_found
         
     incl %ecx
     jmp gpi_loop 
 
 gpi_end_loop:
-    addl $12, %esp # riporto stack pointer in posizione
+    movl $-1, %eax # non trovato
+    jmp gpi_return
+
+gpi_end_loop_found:
+    movl %ecx, %eax    
+
+gpi_return:
+    addl $12, %esp
     popl %edx
-    movl %ecx, %eax # return value
     popl %ecx
     popl %ebx
     popl %ebp

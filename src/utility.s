@@ -94,7 +94,8 @@ strToNum:
     pushl %edi 
     pushl %esi 
     pushl %ecx    
-    pushl %ebx    
+    pushl %ebx
+    pushl %edx    
     movl 8(%ebp), %esi
 
     xorl %ecx, %ecx   # azzero il contatore
@@ -104,7 +105,7 @@ strToNum:
 
 stn_ripeti:
     movb (%ecx,%esi,1), %bl
-    cmp $0, %bl     # vedo se e' stato letto il carattere '\n'
+    cmpb $0, %bl     # vedo se e' stato letto il carattere '\n'
     je stn_fine
     subb $48, %bl   # converte il codice ASCII della cifra nel numero corrisp.
     mull %edi       # EBX = EBX * 10
@@ -113,6 +114,7 @@ stn_ripeti:
     jmp stn_ripeti
 
 stn_fine:
+    popl %edx
     popl %ebx      # ripristino i registri utilizzati    
     popl %ecx    
     popl %esi
@@ -140,8 +142,6 @@ stringCopy:
 
 sc_iterate:
     cmpb $0, (%esi)
-    je sc_end
-    cmpb $10, (%esi) 
     je sc_end
     movl (%esi), %edx
     movl %edx, (%edi)
