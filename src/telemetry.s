@@ -81,11 +81,9 @@ tlm_end_pilot_loop:
     jl tlm_fail
 
     xorl %ecx, %ecx # countChar = 0
-    subl $32, %esp # alloco (ebp) countLine(-4), output(-8), rowPointer(-16)
-    # alloco (ebp) newLine(-20), endChar(-24), comma(-28), pilotId(-32)
-    movl %eax, -32(%ebp)
+    subl $12, %esp # alloco (ebp) countLine(-4), rowPointer(-16)[-8],  pilotId(-32)[-12]
+    movl %eax, -12(%ebp)
     movl %esi, -8(%ebp)
-    movl %esi, -16(%ebp)
 
 tlm_main_loop:    
     cmpb $0, (%edi)
@@ -97,27 +95,11 @@ tlm_flag_loop:
 
 tlm_row_loop:
     movb (%edi), %bl
-    # newLine
-    cmpb $10, %bl
-    sete %al
-    movzbl %al, %eax
-    movl %eax, -20(%ebp)
-    # endChar
-    cmpb $0, %bl 
-    sete %al
-    movzbl %al, %eax
-    movl %eax, -24(%ebp)
-    # comma
-    cmpb $44, %bl
-    sete %al
-    movzbl %al, %eax
-    movl %eax, -28(%ebp) 
-
-    cmpl $1, %eax # comma
+    cmpb $10, %bl # comma
     je tlm_special_char
-    cmpl $1, -20(%ebp) # newLine
+    cmpb $0, %bl # newLine
     je tlm_special_char
-    cmpl $1, -24(%ebp) # endChar
+    cmpb $44, %bl # endChar
     je tlm_special_char
 
     jmp tlm_char
@@ -130,13 +112,13 @@ tlm_special_char:
     pushl %esi
     call strToNum
     addl $4, %esp
-    cmpl -32(%ebp), %eax # pilotId == currentId
+    cmpl -12(%ebp), %eax # pilotId == currentId
     je tlm_special_char_1
     pushl %edi
     call charLen
     addl $4, %esp
     addl %eax, %edi
-    movl -16(%ebp), %esi # rowPointer
+    movl -8(%ebp), %esi # rowPointer
     cmpb $0, (%edi)
     je tlm_end_loop
     movl %edi, %eax
@@ -171,15 +153,15 @@ tlm_special_char_2:
 tlm_special_char_3:
     xorl %ecx, %ecx # countChar = 0
     incl %edi # input++
-    cmpl $0, -28(%ebp) # if (!comma)
-    jne tlm_row_loop
+    cmpb $44, %bl # if (!comma)
+    je tlm_row_loop
     pushl %esi
     call writeArray
     addl $4, %esp
     addl %eax, %esi
     movb $10, (%esi)
     incl %esi
-    cmpl $1, -20(%ebp) # if (newLine && *input != '\n')
+    cmpb $10, %bl # if (newLine && *input != '\n')
     jne tlm_special_char_4 # goto end_loop
     cmpb $10, (%edi)
     je tlm_special_char_4
@@ -196,7 +178,7 @@ tlm_char:
     jmp tlm_row_loop
 
 tlm_main_loop_1:
-    movl %esi, -16(%ebp) # rowPointer
+    movl %esi, -8(%ebp) # rowPointer
     addl $1, -4(%ebp) # countline
     jmp tlm_main_loop
 
