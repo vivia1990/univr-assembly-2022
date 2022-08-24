@@ -186,6 +186,13 @@ tlm_end_loop:
     jmp tlm_return
 
 tlm_fail:
+    movl 24(%ebp), %edi
+    pushl %edi
+    leal invalid_pilot_str, %ebx
+    pushl %ebx
+    call stringCopy
+    addl %eax, %edi
+    movl $0, %edi
     movb $0, (%esi)
     movl $1, %eax
 

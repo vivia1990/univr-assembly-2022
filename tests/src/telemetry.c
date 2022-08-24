@@ -87,6 +87,13 @@ int test_telemetry(unsigned counter)
     memset(row_fields, 0, sizeof(long) * row_fields_size);
     memset(pilot_stats, 0, sizeof(long) * pilot_stats_size);
 
+    strcpy(string, "");
+    telemetry(string, output);
+    custom_assert(stringCompare(output, "Invalid\n") == 0, counter++);
+    memset(output, 0, 1024);
+    memset(row_fields, 0, sizeof(long) * row_fields_size);
+    memset(pilot_stats, 0, sizeof(long) * pilot_stats_size);
+
     free(output);
 
     return 1;
