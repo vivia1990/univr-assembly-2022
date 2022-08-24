@@ -82,8 +82,9 @@ tlm_end_pilot_loop:
 
     xorl %ecx, %ecx # countChar = 0
     subl $12, %esp # alloco (ebp) countLine(-4), rowPointer(-16)[-8],  pilotId(-32)[-12]
-    movl %eax, -12(%ebp)
+    movl $0, -4(%ebp)
     movl %esi, -8(%ebp)
+    movl %eax, -12(%ebp)
 
 tlm_main_loop:    
     cmpb $0, (%edi)
@@ -183,18 +184,21 @@ tlm_main_loop_1:
     jmp tlm_main_loop
 
 tlm_end_loop:
+    cmpl $0, -4(%ebp)
+    je tlm_fail
+    movl $1, %eax
     jmp tlm_return
 
 tlm_fail:
     movl 24(%ebp), %edi
     pushl %edi
+    movl %edi, 4(%esp)
     leal invalid_pilot_str, %ebx
     pushl %ebx
     call stringCopy
-    addl %eax, %edi
-    movl $0, %edi
+    addl %eax, %esi    
     movb $0, (%esi)
-    movl $1, %eax
+    xorl %eax, %eax
 
 tlm_return:
     movl %ebp, %esp    

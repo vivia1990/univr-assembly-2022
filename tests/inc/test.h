@@ -53,7 +53,7 @@ extern int test_charlen(unsigned counter);
 extern int charLen(char* string);
 
 extern int test_strtonum(unsigned counter);
-extern unsigned long strToNum(char*string);
+extern unsigned long strToNum(char* string);
 
 extern int test_writearray(unsigned counter);
 extern long writeArray(char* output);
