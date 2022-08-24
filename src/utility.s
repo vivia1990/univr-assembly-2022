@@ -1,10 +1,8 @@
 .data
-string:
-    .string "00000000000"
-str_len:
-    .long . - string
-car:
-    .byte 0 # la variabile car è dichiarata di tipo byte
+string: .string "00000000000"
+str_len: .long . - string
+car: .byte 0 
+
 .text
 ##
 # int stringCompare(char *string1, char *string2);
@@ -19,8 +17,8 @@ stringCompare:
     pushl %esi
     pushl %ebx
     pushl %ecx
-    movl 8(%ebp), %esi # string1
-    movl 12(%ebp), %edi # string2
+    movl 8(%ebp), %esi
+    movl 12(%ebp), %edi
 
     xorl %ecx, %ecx
     xorl %ebx, %ebx
@@ -97,23 +95,23 @@ strToNum:
     pushl %ebx    
     movl 8(%ebp), %esi
 
-    xorl %ecx, %ecx   # azzero il contatore
-    xorl %ebx, %ebx  # azzero il registro EBX
+    xorl %ecx, %ecx
+    xorl %ebx, %ebx
     xorl %eax, %eax  
     movl $10, %edi
 
 stn_ripeti:
     movb (%ecx,%esi,1), %bl
-    cmp $0, %bl     # vedo se e' stato letto il carattere '\n'
+    cmp $0, %bl   
     je stn_fine
-    subb $48, %bl   # converte il codice ASCII della cifra nel numero corrisp.
-    mull %edi       # EBX = EBX * 10
+    subb $48, %bl 
+    mull %edi     
     addl %ebx, %eax
     inc %ecx
     jmp stn_ripeti
 
 stn_fine:
-    popl %ebx      # ripristino i registri utilizzati    
+    popl %ebx    
     popl %ecx    
     popl %esi
     popl %edi
@@ -157,9 +155,13 @@ sc_end:
     popl %ebp
     ret
 
+##
+# char* intToString(unsigned long numeric);
+# converte un numero unsigned long in stringa
+##
 .text
-.global intToString # rende visibile il simbolo itoa al linker
-.type intToString, @function # dichiarazione della funzione itoa
+.global intToString
+.type intToString, @function
 intToString:
     pushl %ebp
     movl %esp, %ebp
@@ -169,29 +171,32 @@ intToString:
     pushl %ecx
     pushl %edx
     movl 8(%ebp), %eax
-    mov $0, %ecx # carica il numero 0 in ecx
+    mov $0, %ecx
     leal string, %edi
     addl str_len, %edi
+
 is_continua_a_dividere:
-    cmp $10, %eax # confronta 10 con il contenuto di eax
-    jge is_dividi # salta all'etichetta dividi se eax è
-    pushl %eax # salva nello stack il contenuto di eax
-    inc %ecx # incrementa di 1 il valore di ecx per
-    mov %ecx, %ebx # pone il valore di ecx in ebx
+    cmp $10, %eax
+    jge is_dividi
+    pushl %eax
+    inc %ecx
+    mov %ecx, %ebx
     pushl %ecx
     leal string, %ecx
     addl str_len, %ecx
     subl %ebx, %ecx
     movl %ecx, %esi
     popl %ecx
-    jmp is_salva # salta all'etichetta stampa
+    jmp is_salva
+
 is_dividi:
-    movl $0, %edx # carica 0 in edx
-    movl $10, %ebx # carica 10 in ebx
-    divl %ebx # divide per ebx (10) il numero ottenuto
-    pushl %edx # salva il resto nello stack
-    inc %ecx # incrementa il contatore delle cifre da stampare
+    movl $0, %edx
+    movl $10, %ebx
+    divl %ebx
+    pushl %edx
+    inc %ecx
     jmp is_continua_a_dividere
+
 is_salva:
     cmp $0, %ebx
     je is_fine
@@ -204,6 +209,7 @@ is_salva:
     addl %ebx, %edi
     dec %ebx
     jmp is_salva
+
 is_fine:
     movl %esi, %eax
     popl %edx
