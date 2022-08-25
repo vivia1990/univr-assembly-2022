@@ -27,8 +27,12 @@ unit_test test_array[] = {
         .test = &test_setpilotstats },
     { .name = "StrToNum",
         .test = &test_strtonum },
+    { .name = "NumToStr",
+        .test = &test_inttostring },
     { .name = "Telemetry",
-        .test = &test_telemetry }
+        .test = &test_telemetry },
+    { .name = "setTotalsRow",
+        .test = &test_settotalsrow }
 };
 
 int main(int argc, char const* argv[])

@@ -57,6 +57,8 @@ int test_inttostring(unsigned counter)
     custom_assert(stringCompare(intToString(1312), "1312") == 0, counter++);
     custom_assert(stringCompare(intToString(1), "1") == 0, counter++);
     custom_assert(stringCompare(intToString(1000001), "1000001") == 0, counter++);
+    custom_assert(stringCompare(intToString(0), "0") == 0, counter++);
+    custom_assert(stringCompare(intToString(22151251), "22151251") == 0, counter++);
 
     return 1;
 }

@@ -35,6 +35,7 @@ const char* const pilots[] = {
 
 int test_getpilotid(unsigned counter)
 {
+    char* test = malloc(1024);
     custom_assert(getPilotId("Alexander Albon") == 10, counter);
     custom_assert(getPilotId("Max Verstappen") == 2, counter);
     custom_assert(getPilotId("Pierre Gasly") == 0, counter);
@@ -42,6 +43,7 @@ int test_getpilotid(unsigned counter)
     custom_assert(getPilotId("burundi") < 0, counter);
     custom_assert(getPilotId("Valtteri Bottass") < 0, counter);
     custom_assert(getPilotId("romain Grosjean") < 0, counter);
+    free(test);
     return 1;
 }
 
@@ -220,12 +222,29 @@ int test_writearray(unsigned counter)
     return 1;
 }
 
-char *test_settotalsrow(unsigned counter) {
-    int countline = 2;
+int test_settotalsrow(unsigned counter)
+{
+    unsigned long countLine = 0;
+    char* output = malloc(1024);
+    countLine = 2;
     pilot_stats[0] = 10;
     pilot_stats[1] = 20;
     pilot_stats[2] = 30;
     pilot_stats[3] = 40;
-    char *output = setTotalsRow(countline);
-    custom_assert(stringCompare(output, "10,20,30,20\n"), counter++);
+
+    setTotalsRow(output, countLine);
+    custom_assert(stringCompare(output, "10,20,30,20\n") == 0, counter++);
+    memset(output, 0, 1024);
+
+    countLine = 16;
+    pilot_stats[0] = 7158;
+    pilot_stats[1] = 200;
+    pilot_stats[2] = 100;
+    pilot_stats[3] = 152048;
+    setTotalsRow(output, countLine);
+    custom_assert(stringCompare(output, "7158,200,100,9503\n") == 0, counter++);
+    memset(pilot_stats, 0, sizeof(long) * pilot_stats_size);
+    free(output);
+
+    return 1;
 }

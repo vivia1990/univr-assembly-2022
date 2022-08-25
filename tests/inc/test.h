@@ -70,5 +70,5 @@ extern void setPilotStat(long number, long lowVal, long highVal, long index);
 extern int test_inttostring(unsigned counter);
 extern char* intToString(int num);
 
-char* test_settotalsrow(unsigned counter);
-extern char* setTotalsRow(int countline);
+int test_settotalsrow(unsigned counter);
+extern void setTotalsRow(char* output, unsigned long countline);
