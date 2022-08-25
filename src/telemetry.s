@@ -344,14 +344,14 @@ setPilotStat:
     
 sps_1:
     cmpl %eax, 20(%ebp) # lowVal
-    jle sps_2
+    jl sps_2
     leal strLow, %ebx
     movl %ebx, row_fields(, %ecx, 4)
     jmp sps_end
 
 sps_2:
     cmpl %eax, 24(%ebp) # highVal
-    jg sps_3
+    jge sps_3
     leal strHigh, %ebx
     movl %ebx, row_fields(, %ecx, 4)
     jmp sps_end
