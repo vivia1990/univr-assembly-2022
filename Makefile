@@ -1,4 +1,4 @@
-GCC = gcc -g -m32
+GCC = gcc -m32
 EXE = telemetry
 temp = $(shell find src/ -type f |  sed 's|^.*/|obj/|')
 objs = $(temp:.c=.o)
