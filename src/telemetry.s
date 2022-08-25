@@ -186,6 +186,9 @@ tlm_main_loop_1:
 tlm_end_loop:
     cmpl $0, -4(%ebp)
     je tlm_fail
+    pushl -4(%ebp)
+    pushl %esi
+    call setTotalsRow
     movl $1, %eax
     jmp tlm_return
 

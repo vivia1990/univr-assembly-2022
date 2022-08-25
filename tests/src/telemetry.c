@@ -110,6 +110,22 @@ int test_telemetry(unsigned counter)
     memset(row_fields, 0, sizeof(long) * row_fields_size);
     memset(pilot_stats, 0, sizeof(long) * pilot_stats_size);
 
+    strcpy(string, "Kevin Magnussen\n0.01023,9,0,5000,90");
+    telemetry(string, output);
+    custom_assert(stringCompare(output, "0.01023,LOW,LOW,LOW\n5000,90,0,0\n") == 0, counter++);
+    memset(output, 0, 1024);
+    memset(row_fields, 0, sizeof(long) * row_fields_size);
+    memset(pilot_stats, 0, sizeof(long) * pilot_stats_size);
+
+    strcpy(string, "Kevin Magnussen\n0.01023,9,0,5000,110");
+    telemetry(string, output);
+    printf("%s", output);
+    unsigned flag = stringCompare(output, "0.01023,LOW,MEDIUM,LOW\n5000,110,0,0\n");
+    custom_assert(flag == 0, counter++);
+    memset(output, 0, 1024);
+    memset(row_fields, 0, sizeof(long) * row_fields_size);
+    memset(pilot_stats, 0, sizeof(long) * pilot_stats_size);
+
     free(output);
 
     return 1;
