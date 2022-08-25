@@ -15,4 +15,4 @@ obj/%.o: src/%.s
 	$(GCC) -c $< -o $@
 
 clean:
-	rm -f obj/* bin/*%
+	rm -f obj/* bin/*

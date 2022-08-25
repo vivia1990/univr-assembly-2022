@@ -1,0 +1,61 @@
+#!/bin/bash
+
+inFile=$1
+outFile=$2
+
+RED='\033[1;31m'
+BLUE='\033[1;34m'
+PURP='\033[1;35m'
+CYAN='\033[1;36m'
+NC='\033[0m'
+
+test_project()
+{    
+    eval "./telemetry $1 $2" 
+    echo -e "File ${BLUE}$1${NC}"
+}
+
+test_project_all()
+{
+    echo -e "${PURP}Inizio test ${NC}\n"
+    for file in ../tests/istanze/input/*.txt; do
+        local index=$(echo "$file" | grep -o '[0-9]*')
+        if [[ -z "$index" ]]
+            then continue
+        fi
+
+        test_project "$file" "out.txt"
+        local result=$(diff  --color out.txt "../tests/istanze/output/out_${index}.txt")        
+        if [[ -n $result ]]; then
+            echo -e "${RED}Fallito!${NC}"
+            cp out.txt "${index}_out_failed.txt"
+            echo $result            
+        fi
+        echo -e "${PURP}Passato!${NC}"      
+    done
+    rm -f out.txt
+    echo -e "\n${PURP}Fine test ${NC}"
+    exit 0
+}
+
+cd ..
+make > /dev/null
+cd bin
+
+if [[ "$1" == "all" ]];
+    then test_project_all
+fi
+
+if [[ -z "$inFile" ]];
+    then inFile="input.txt"
+fi
+
+if [[ ! -f "$inFile" ]];
+    then inFile="../tests/istanze/input/$inFile"
+fi
+
+if [[ -z "$outFile" ]]
+    then outFile="out.txt"
+fi
+
+test_project "$inFile" "$outFile"
