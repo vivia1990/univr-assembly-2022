@@ -173,7 +173,7 @@ intToString:
     leal string, %edi
     addl str_len, %edi
 is_continua_a_dividere:
-    cmp $10, %eax # confronta 10 con il contenuto di eax
+    cmpl $10, %eax # confronta 10 con il contenuto di eax
     jge is_dividi # salta all'etichetta dividi se eax è
     pushl %eax # salva nello stack il contenuto di eax
     inc %ecx # incrementa di 1 il valore di ecx per
@@ -205,6 +205,7 @@ is_salva:
     dec %ebx
     jmp is_salva
 is_fine:
+    movb $0, (%esi, %ecx, 1)
     movl %esi, %eax
     popl %edx
     popl %ecx
