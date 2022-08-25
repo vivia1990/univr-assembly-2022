@@ -6,7 +6,7 @@ PURP='\033[1;35m'
 CYAN='\033[1;36m'
 NC='\033[0m'
 
-files=("elaborato.md" "variabili.md" "flusso.md")
+files=("elaborato.md" "vincoli.md" "variabili.md" "tabella.md" "flusso.md" "tlm-funzioni.md")
 build_relazione() 
 {
     cd relazione
