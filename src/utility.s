@@ -108,17 +108,17 @@ strToNum:
 
 stn_ripeti:
     movb (%ecx,%esi,1), %bl
-    cmpb $0, %bl     # vedo se e' stato letto il carattere '\n'
+    cmpb $0, %bl     
     je stn_fine
-    subb $48, %bl   # converte il codice ASCII della cifra nel numero corrisp.
-    mull %edi       # EBX = EBX * 10
+    subb $48, %bl   
+    mull %edi       
     addl %ebx, %eax
     inc %ecx
     jmp stn_ripeti
 
 stn_fine:
     popl %edx
-    popl %ebx      # ripristino i registri utilizzati    
+    popl %ebx      
     popl %ecx    
     popl %esi
     popl %edi

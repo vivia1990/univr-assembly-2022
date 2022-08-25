@@ -48,16 +48,16 @@ telemetry:
     pushl %edx
     pushl %ecx
     movl %esp, %ebp
-    movl 20(%ebp), %edi # char *input
-    movl 24(%ebp), %esi # char *output
+    movl 20(%ebp), %edi
+    movl 24(%ebp), %esi
     
-    cmpb $0, (%edi) # if (*input == '\n' || (*input == '\0'))
+    cmpb $0, (%edi)
     je tlm_fail
 
     cmpb $10, (%edi)
     je tlm_fail
 
-    subl $4, %esp # alloco parametro getPilotId
+    subl $4, %esp
     xorl %ecx, %ecx # countChar
 
 tlm_pilot_loop:
@@ -81,7 +81,7 @@ tlm_end_pilot_loop:
     jl tlm_fail
 
     xorl %ecx, %ecx # countChar = 0
-    subl $12, %esp # alloco (ebp) countLine(-4), rowPointer(-16)[-8],  pilotId(-32)[-12]
+    subl $12, %esp # alloco (ebp) countLine(-4), rowPointer(-8),  pilotId(-12)
     movl $0, -4(%ebp)
     movl %esi, -8(%ebp)
     movl %eax, -12(%ebp)
@@ -108,7 +108,7 @@ tlm_row_loop:
 tlm_special_char:
     movb $0, (%esi, %ecx, 1)
     incl %edx # countComma
-    cmpl $2, %edx # if countComma == 2
+    cmpl $2, %edx
     jne tlm_special_char_2
     pushl %esi
     call strToNum
@@ -131,21 +131,21 @@ tlm_special_char:
     movl %edi, %eax
     incl %eax
     cmpb $10, (%eax)
-    je tlm_end_loop # se è uguale anche quello prima lo è, salto
+    je tlm_end_loop
 
 tlm_reset_comma:
     xorl %edx, %edx
 
 tlm_special_char_1:
     incl %edi # input++
-    jmp tlm_flag_loop # goto loop
+    jmp tlm_flag_loop
 
 tlm_special_char_2:
     pushl %edx
     pushl %esi
     call setPilotStats
     addl $8, %esp
-    cmpl $1, %edx # if countComma == 1
+    cmpl $1, %edx
     jne tlm_special_char_3
     movb %bl, (%esi, %ecx, 1)
     addl %ecx, %esi
@@ -154,7 +154,7 @@ tlm_special_char_2:
 tlm_special_char_3:
     xorl %ecx, %ecx # countChar = 0
     incl %edi # input++
-    cmpb $44, %bl # if (!comma)
+    cmpb $44, %bl
     je tlm_row_loop
     pushl %esi
     call writeArray
@@ -163,7 +163,7 @@ tlm_special_char_3:
     movb $10, (%esi)
     incl %esi
     cmpb $10, %bl # if (newLine && *input != '\n')
-    jne tlm_special_char_4 # goto end_loop
+    jne tlm_special_char_4
     cmpb $10, (%edi)
     je tlm_special_char_4
     jmp tlm_main_loop_1
@@ -229,14 +229,14 @@ getPilotId:
 
     xorl %ecx, %ecx
     subl $12, %esp # alloco anche contatore
-    movl 20(%ebp), %edx # parametro pilotname
+    movl 20(%ebp), %edx
     movl %edx, -8(%ebp)
     movl pilots_size, %edx
     decl %edx
 
 gpi_loop:
     cmpl %edx, %ecx
-    jg gpi_end_loop # while < pilots_size
+    jg gpi_end_loop
 
     movl pilots_array(, %ecx, 4), %ebx
     movl %ebx, (%esp) # parametro char
@@ -249,7 +249,7 @@ gpi_loop:
     jmp gpi_loop 
 
 gpi_end_loop:
-    movl $-1, %eax # non trovato
+    movl $-1, %eax
     jmp gpi_return
 
 gpi_end_loop_found:
@@ -278,7 +278,7 @@ setPilotStats:
     pushl %ecx
     movl %esp, %ebp
     movl 16(%ebp), %eax # output
-    movl 20(%ebp), %ebx # field
+    movl 20(%ebp), %ebx
     subl $16, %esp
     movl %eax, (%esp)
 
@@ -293,7 +293,7 @@ setPilotStats:
     movl $2, 12(%esp)
     movl $250, 8(%esp)
     movl $100, 4(%esp)
-    movl $3, %eax # pilot_stats[3]
+    movl $3, %eax
     movl (%esp), %ecx
     addl pilot_stats(, %eax, 4), %ecx
     movl %ecx, pilot_stats(, %eax, 4)
@@ -338,7 +338,7 @@ setPilotStat:
     pushl %ebx
     pushl %ecx
     movl %esp, %ebp    
-    movl 16(%ebp), %eax # number
+    movl 16(%ebp), %eax
     movl 28(%ebp), %ecx # index
     
     cmpl %eax, pilot_stats(, %ecx, 4)
@@ -385,7 +385,7 @@ writeArray:
     pushl %edx
     movl %esp, %ebp    
     movl 20(%ebp), %ebx # parametro output
-    subl $8, %esp # alloco per parametri
+    subl $8, %esp
     xorl %ecx, %ecx
     movl row_fields_size, %edx
 
