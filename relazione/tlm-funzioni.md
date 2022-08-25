@@ -3,13 +3,12 @@ language: it-IT
 ---
 
 \newpage
-\newpage
 
 # Funzioni Telemetry
 Di seguito sono elencate in codice `C` le funzioni del file `telemetry.s`, ad eslcusione di `telemetry`.
 
 ## setTotalsRow {.unlisted .unnumbered}
-Aggiunge alla fine del testo le statistiche del pilota selezionato contenute nell'array [**pilot_stats**](#variabili). L'ultimo campo dell'array contiene la somma della velocità, che divisa per il numero di **righe valide** darà la velocità media (intera)
+Aggiunge alla fine del testo le statistiche del pilota selezionato contenute nell'array [**pilot_stats**](#variabili-globali). L'ultimo campo dell'array contiene la somma della velocità, che divisa per il numero di **righe valide** darà la velocità media (intera)
 ```c
 void setTotalsRow(char* output, long countLine)
 {    
@@ -29,7 +28,7 @@ void setTotalsRow(char* output, long countLine)
 ```
 
 ## writeArray {.unlisted .unnumbered}
-Scrive sull'output il contenuto dell'array [**row_fields**](#variabili) popolato precedentemente da setPilotStats.
+Scrive sull'output il contenuto dell'array [**row_fields**](#variabili-globali) popolato precedentemente da setPilotStats.
 Questa funzione viene chiamata alla fine di ogni riga valida. Ritorna il numero di caratteri scritti.
 ```c
 long writeArray(char* output)
@@ -50,7 +49,7 @@ long writeArray(char* output)
 \newpage
 
 ## setPilotStats {.unlisted .unnumbered}
-Chiama setPilotStat con i relativi parametri a seconda del campo field [**countComma**](#x)
+Chiama setPilotStat con i relativi parametri a seconda del parametro field [**(countComma)**](#flusso-telemetry), che determina l'azione da eseguire in base al campo che si sta analizzando
 
 ```c
 void setPilotStats(char* output, unsigned field)
@@ -83,7 +82,7 @@ spss_end:
 
 
 ## getPilotId {.unlisted .unnumbered}
-Fornisce, dato il nome del pilota, il suo id confrontando la stringa in input con ogni elemento di [**pilots_array**](#variabili) restituendo l'indice dell'array se viene trovato un elemento uguale a quello dato in input metre restituisce -1 nel caso non venga trovato.
+Fornisce, dato il nome del pilota, il suo id confrontando la stringa in input con ogni elemento di [**pilots_array**](#variabili-globali) restituendo l'indice dell'array se viene trovato un elemento uguale a quello dato in input metre restituisce -1 nel caso non venga trovato.
 ```c
 long getPilotId(const char* pilotName)
 {
@@ -104,8 +103,8 @@ long getPilotId(const char* pilotName)
 
 
 ## setPilotStat {.unlisted .unnumbered}
-Prende in input il valore da analizzare insieme ai valori di [soglia](#vincoli) in base a quali viene scritta la stringa corrispondente sull'array [**rowFields**](#variabili) in posizione **index**, ossia la posizione corretta che il campo deve avere nella riga di output. 
-Viene aggiornato anche il corrispondente massimo, se necessario, in [**pilot_stats**](#variabili)
+Setta la statistica individuata da **index** in base ai valori di [soglia](#vincoli-e-scelte-progettuali). Viene scritta la stringa corrispondente sull'array [**rowFields**](#variabili-globali) in posizione **index**, ossia la posizione corretta che il campo deve avere nella riga di output. 
+Viene aggiornato anche il corrispondente massimo in [**pilot_stats**](#variabili-globali)
 ```c
 void setPilotStat(long number, long lowVal, long highVal, long index)
 {

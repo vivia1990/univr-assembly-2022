@@ -29,3 +29,4 @@ Al comando vanno passati due parametri
 asm> make
 asm> ./telemetry "path/to/input.txt" "path/to/output.txt
 ```
+Il contenuto sarà in `out.txt`

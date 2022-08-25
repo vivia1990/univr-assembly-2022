@@ -10,7 +10,7 @@ I parametri vengono passati alle funzioni caricandoli sullo **stack**, di modo d
 
 | **Definizione**  | **Descrizione** |
 | ------------- | ------------- |
-| [`int stringCompare(`{.c}](#flusso)       | Compara due stringhe, se sono uguali
+| `int stringCompare(`{.c}       | Compara due stringhe, se sono uguali
 | \quad `char *string1,   `{.c}     | ritorna `0`, se la prima è maggiore
 | \quad `char *string2     `{.c}    |  ritorna un valore **maggiore** di `0` 
 | ` );`{.c}                       |  altrimenti **minore** \[`utility.s`\]
@@ -26,25 +26,25 @@ I parametri vengono passati alle funzioni caricandoli sullo **stack**, di modo d
 |                   |
 | `char* intToString(unsigned long numeric);`{.c}  | Converte un numero unsigned long in stringa \[`utility.s`\] |
 |                   |
-| `void telemetry(inputString, outputString);`{.c}  | Funzione principale \[`telemetry.s`\] |
+| [`void telemetry(inputString, outputString);`{.c}](#flusso-telemetry)  | Funzione principale \[`telemetry.s`\] |
 |                   |
-| `int getPilotId(char *pilotName);`{.c}  | Restituisce id del pilota dall'array dei piloti \[`telemetry.s`\] |
+| [`int getPilotId(char *pilotName);`{.c}](#getpilotid)  | Restituisce id del pilota dall'array dei piloti \[`telemetry.s`\] |
 |                   |
-| `int setPilotStats(`{.c}      | Setta la statistica relative al pilota da 
+| [`int setPilotStats(`{.c}](#setpilotstats)      | Setta la statistica relative al pilota da 
 | \quad `char *output,`{.c}     | aggiornare a seconda del parametro field
 | \quad `unsigned field`{.c}    | \[`telemetry.s`\]
 | )                 | 
 |                   |
-| `void setPilotStat(`{.c}  | Setta la statistica relativa al pilota con i vari 
+| [`void setPilotStat(`{.c}](#setpilotstat)  | Setta la statistica relativa al pilota con i vari 
 | \quad `long number,`{.c}  | confronti per **rowFields** e **pilot_stats** 
 | \quad `long lowVal,`{.c}  | \[`telemetry.s`\]
 | \quad `long highVal,`{.c} |
 | \quad `long index`{.c}    |
 | `);`{.c}  
 |                   |
-| `long writeArray(char *output);`{.c}  | Scrive i valori di **row_fields** e ritorna il numero di caratteri scritti  \[`telemetry.s`\] |
+| [`long writeArray(char *output);`{.c}](#writearray)  | Scrive i valori di **row_fields** e ritorna il numero di caratteri scritti  \[`telemetry.s`\] |
 |                   |
-| `void setTotalsRow(`{.c}  | Scrive i valori di **pilot_stats** nell'ultima riga 
+| [`void setTotalsRow(`{.c}](#settotalsrow)  | Scrive i valori di **pilot_stats** nell'ultima riga 
 | \quad `char* output,`{.c} | di output \[`telemetry.s`\]
 | \quad `unsigned long countLine`{.c} |
 | `);`{.c}  |
