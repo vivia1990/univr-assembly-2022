@@ -1,6 +1,6 @@
 ---
 title: Telemetria F1
-author: Michele Viviani, Pietro Decarli, Silvia Caprioli
+author: Michele Viviani, Pietro De Carli, Silvia Caprioli
 language: it-IT
 ---
 
@@ -46,17 +46,17 @@ Il programma chiama una funzione assembly, `telemetry`, che restituisce come out
  `tempo`,  `rpm`,  `temperatura`,  `velocità` 
 \newline
 \newline
-Tali  valori, escluso il tempo, sono rappresentati ottoforma di stringhe `LOW`, `MEDIUM`, `HIGH` in base al range specificato. \newline
+Tali  valori, escluso il tempo, sono rappresentati sottoforma di stringhe `LOW`, `MEDIUM`, `HIGH` in base alla comparazione dell'input con delle soglie specificate, per ogni campo. \newline
 L'ultima riga del file di output conterrà un resoconto con il numero di giri massimi, la temperatura massima rilevata, la velocità di picco e la velocità media, così strutturate: \newline
 `rpm max`,  `temp max`,  `velocità max`,  `velocità media` 
 \newline
 
-Di seguito la tabella con i valori di range
+Di seguito la tabella con i valori delle soglie
 
 | **Campo**              | **Low**          | **Medium**                       |    **High**      |
 | :--------------------: | ---------------- | -------------------------------- | ---------------- |
 |   **Rpm**              |  $\leq 5000$     | $5000 < \text{value} \leq 10000$ |  $> 10000$       |
 |   **Temperatura**      |  $\leq 90$       | $90 < \text{value} \leq 110$     |  $> 110$         |
-|   **Temperatura**      |  $\leq 100$      | $100 < \text{value} \leq 250$    |  $> 250$         |
+|   **Velocità**      |  $\leq 100$      | $100 < \text{value} \leq 250$    |  $> 250$         |
 
 
