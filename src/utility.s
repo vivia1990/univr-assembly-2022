@@ -22,8 +22,8 @@ stringCompare:
     pushl %esi
     pushl %ebx
     pushl %ecx
-    movl 8(%ebp), %esi # string1
-    movl 12(%ebp), %edi # string2
+    movl 8(%ebp), %esi
+    movl 12(%ebp), %edi
 
     xorl %ecx, %ecx
     xorl %ebx, %ebx
@@ -101,8 +101,8 @@ strToNum:
     pushl %edx    
     movl 8(%ebp), %esi
 
-    xorl %ecx, %ecx   # azzero il contatore
-    xorl %ebx, %ebx  # azzero il registro EBX
+    xorl %ecx, %ecx
+    xorl %ebx, %ebx
     xorl %eax, %eax  
     movl $10, %edi
 
@@ -160,9 +160,13 @@ sc_end:
     popl %ebp
     ret
 
+##
+# char* intToString(unsigned long numeric);
+# converte un numero unsigned long in stringa
+##
 .text
-.global intToString # rende visibile il simbolo itoa al linker
-.type intToString, @function # dichiarazione della funzione itoa
+.global intToString
+.type intToString, @function
 intToString:
     pushl %ebp
     pushl %ebx
