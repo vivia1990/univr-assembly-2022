@@ -413,3 +413,57 @@ wa_end_loop:
     popl %ebp
 
     ret
+.text
+##
+# Scrive i valori array row_fields e ritorna il numero di caratteri scritti
+# long writeArray(char *output)
+##
+.globl setTotalsRow
+.type setTotalsRow, @function
+setTotalsRow:
+    pushl %eax
+    pushl %ebx
+    pushl %ecx
+    pushl %edx
+    pushl %edi
+    movl $1, %ecx
+    movl 24(%esp), %edx
+    leal 24(%ebp), %edi
+ripeti:
+    cmpl %ecx, pilot_stats_size
+    je fine
+    dec %ecx
+    pushl pilot_stats(, %ecx, 4)
+    call intToString
+    pushl %edi
+    pushl %eax
+    call stringCopy
+    addl %eax, %edi
+    movl $44, (%edi)
+    inc %edi
+    inc %ecx
+    inc %ecx
+    jmp ripeti
+fine:
+    movl %edx, %ecx
+    movl $3, %eax
+    movl pilot_stats(, %eax, 4), %eax
+    xorl %edx, %edx
+    divl %ecx
+    pushl %edi
+    pushl %eax
+    call intToString
+    pushl %edi
+    pushl %eax
+    call stringCopy
+    addl %eax, %edi
+    movl $10, (%edi)
+    inc %edi
+    movl $0, (%edi)
+    popl %edi
+    popl %edx
+    popl %ecx
+    popl %ebx
+    popl %eax
+    leal 24(%ebp), %eax
+    ret

@@ -219,3 +219,13 @@ int test_writearray(unsigned counter)
     free(output);
     return 1;
 }
+
+char *test_settotalsrow(unsigned counter) {
+    int countline = 2;
+    pilot_stats[0] = 10;
+    pilot_stats[1] = 20;
+    pilot_stats[2] = 30;
+    pilot_stats[3] = 40;
+    char *output = setTotalsRow(countline);
+    custom_assert(stringCompare(output, "10,20,30,20\n"), counter++);
+}
