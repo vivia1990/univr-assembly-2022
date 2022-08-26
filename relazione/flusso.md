@@ -20,7 +20,7 @@ Tramite **countComma** vengono stabilite le azioni da fare.
 | :-----------------: | ------------------------------------------------------------------ |
 |     **1**         |   viene messa la virgola in posizione `outPointer + countChar` e incrementato **outPointer** in modo da essere in posizione giusta per scrivere il campo successivo.|
 |                   |
-|     **2**         |   viene controllato se **idPilot** corrisponde all'id presente nella riga, e scritto in **output**. Se non corrispondono viene saltata la riga e azzerato **countComma** e se si tratta anche dell'ultima l'esecuzione salta alla fine dei due cicli. Altrimenti, se la riga è valida, viene incrementato **input** e riparte il ciclo `tlm_row_loop`|
+|     **2**         |   viene controllato se **pilotId** corrisponde all'id presente nella riga, e scritto in **output**. Se non corrispondono viene saltata la riga e azzerato **countComma** e se si tratta anche dell'ultima l'esecuzione salta alla fine dei due cicli. Altrimenti, se la riga è valida, viene incrementato **input** e riparte il ciclo `tlm_row_loop`|
 
 Per ogni campo viene inoltre chiamata **setPilotStats**, incrementato **input** e resettato **countChar**.
 Se il carattere speciale è `(\n o \0)`, viene chiamata **writeArray**, inserito il carattere `\n`, e se si tratta dell'ultima riga, l'esecuzione salta a fine ciclo, altrimenti riparte da `tlm_main_loop`. \newline
